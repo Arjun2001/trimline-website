@@ -156,7 +156,7 @@ home = f'''
 <div class="marquee"><div class="label">Authorised partner of world-leading manufacturers</div><div class="track">{marq}</div></div>
 
 <section><div class="wrap"><div class="sec-head"><div><span class="eyebrow rv">Solutions by department</span><h2 class="rv d1">Equip a whole department, <em class="s">not just a room.</em></h2></div><p class="rv d2">Pick your department to see the product lines that go into it — planned, supplied and installed by one team.</p></div>
-<div class="dept-grid">{dept_tiles()}</div></div></section>
+<div class="dept-grid rail">{dept_tiles()}</div><div class="swipe-hint">Swipe to see more {I("arrow")}</div></div></section>
 
 <section class="band"><div class="bg" style="background-image:url({U(CAT_PHOTO["anesthesia-workstation"],2000)})"></div><div class="wrap">
 <span class="eyebrow rv" style="color:var(--accent-2)">Featured · MAQUET FLOW-i</span><h2 class="rv d1">ICU-grade ventilation, <em class="s">now in your OT.</em></h2>
@@ -164,7 +164,7 @@ home = f'''
 <div class="rv d3" style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap"><a class="btn btn-primary" href="anesthesia-workstation.html">See anaesthesia range {I("arrow")}</a><button class="btn btn-ghost" data-add="FLOW-i C20" data-cat="Anaesthesia Workstations">{I("plus")}<span>Add to quote</span></button></div></div></section>
 
 <section><div class="wrap"><div class="sec-head"><div><span class="eyebrow rv">Our products</span><h2 class="rv d1">{len(CATEGORIES)} product lines, <em class="s">one trusted partner.</em></h2></div><a class="btn btn-line rv d2" href="products.html">View all {TOTAL}+ products {I("arrow")}</a></div>
-<div class="cat-grid">{cat_cards}</div></div></section>
+<div class="cat-grid rail">{cat_cards}</div><div class="swipe-hint">Swipe to see more {I("arrow")}</div></div></section>
 
 <section style="padding-top:0"><div class="wrap split">
 <div class="showcase rv"><div class="ring"></div><img src="{img("c.png")}" alt="Skanray Skan-C C-arm"><span class="chip" style="right:8%;top:12%">{I("scan")} DICOM 3.0</span><span class="chip" style="left:8%;bottom:14%">{I("bolt")} 3.5 kW HF generator</span></div>
