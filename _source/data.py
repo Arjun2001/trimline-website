@@ -11,6 +11,14 @@ COMPANY = {
     "fax": "044 2362 4881",
     "email": "contact@trimlinemedicalsystems.com",
     "map": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.6807694492563!2d80.20752361482289!3d13.055980490800568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52675e3b4c8771%3A0xbdd06def426e3952!2sTrimline+Medical+Systems!5e0!3m2!1sen!2sin!4v1524649924188",
+    "hours": "Mon–Sat, 9:30 AM – 6:30 PM",
+    "since": 2002,
+    "site": "https://trimlinemedicals.com/",
+    "same_as": [
+        "https://www.justdial.com/Chennai/Trimline-Medical-Systems-Near-Dhanalakshmi-Colony-Near-Canara-Bank-Vadapalani-Bus-Depot-Vadapalani/044P7020395_BZDET",
+        "https://www.sulekha.com/trimline-medical-systems-vadapalani-chennai-contact-address",
+        "https://www.tradeindia.com/trimline-medical-systems-2922888/",
+    ],
     "map_link": "https://www.google.com/maps/search/?api=1&query=Trimline+Medical+Systems+Vadapalani+Chennai",
 }
 

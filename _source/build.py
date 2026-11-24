@@ -1,4 +1,4 @@
-import json, os, html, sys
+import json, os, html, sys, re
 from data import IMG, COMPANY as C, PRINCIPALS, WHY, CATEGORIES, U, PHOTOS, CAT_PHOTO, DEPARTMENTS, SERVICES, PROCESS, FAQ
 CATMAP = {c['slug']: c for c in CATEGORIES}
 
@@ -41,6 +41,8 @@ ICONS = {
  "up": '<path d="M12 19V5M5 12l7-7 7 7"/>',
  "search": '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
  "globe": '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ "share": '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+ "nav": '<path d="m3 11 19-9-9 19-2-8z"/>',
  "plus": '<path d="M12 5v14M5 12h14"/>',
  "list": '<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
  "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
@@ -53,21 +55,21 @@ def img(path): return IMG + path
 def nprod(c): return sum(len(g[1]) for g in c["groups"])
 TOTAL = sum(nprod(c) for c in CATEGORIES)
 
-def head(title, desc):
+def head(title, desc, canon='', ogimg='', ld_extra=''):
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}"><meta name="theme-color" content="#08202c">
-<meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website">
+<meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{canon}"><meta property="og:image" content="{ogimg}"><meta property="og:site_name" content="Trimline Medical Systems"><meta property="og:locale" content="en_IN"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="{canon}"><meta name="geo.region" content="IN-TN"><meta name="geo.placename" content="Chennai">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230aa58a'/%3E%3Cpath d='M3 12h3.5l2-5 4 10 2-5H21' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://images.unsplash.com">
-<script type="application/ld+json">{LD}</script>
+<script type="application/ld+json">{LD}</script>{ld_extra}
 <style>{CSS}</style></head><body><div class="progress"></div>'''
 
 LD = json.dumps({"@context":"https://schema.org","@type":"MedicalBusiness","name":C["name"],"description":"Medical equipment and instruments supplier",
   "telephone":"+91-44-23624880","faxNumber":"+91-44-23624881","email":C["email"],"url":"https://trimlinemedicals.com/",
   "address":{"@type":"PostalAddress","streetAddress":"Plot No. 3, Flat No. G1, Venkateshwara Street, Dhanalakshmi Colony, Vadapalani","addressLocality":"Chennai","postalCode":"600026","addressRegion":"Tamil Nadu","addressCountry":"IN"},
-  "geo":{"@type":"GeoCoordinates","latitude":13.05598,"longitude":80.20752}})
+  "geo":{"@type":"GeoCoordinates","latitude":13.05598,"longitude":80.20752},"openingHours":"Mo-Sa 09:30-18:30","foundingDate":"2002","areaServed":"Chennai, Tamil Nadu","sameAs":C["same_as"],"hasMap":C["map_link"],"priceRange":"On request","image":U("1579684385127-1ef15d508118",1200),"brand":[{"@type":"Brand","name":n} for n,_,_ in PRINCIPALS]})
 
 def logo():
     return f'<a href="index.html" class="logo" aria-label="Trimline Medical Systems home"><span class="logo-mark">{LOGO_MARK}</span><span><b>Trimline</b><small>Medical Systems</small></span></a>'
@@ -76,7 +78,7 @@ def header(active=""):
     mega = "".join(f'<a href="{c["slug"]}.html"><span class="ic">{I(c["icon"])}</span><span><b>{e(c["title"])}</b><span>{e(c["short"])}</span></span></a>' for c in CATEGORIES)
     def a(href, label, key): return f'<li><a href="{href}" class="{"active" if active==key else ""}">{label}</a></li>'
     drawer_sub = "".join(f'<a href="{c["slug"]}.html">{e(c["title"])}</a>' for c in CATEGORIES)
-    return f'''<div class="topbar"><div class="wrap"><div class="tb-l"><a href="tel:{C["phone_href"]}">{I("phone")}{C["phone"]}</a><a href="mailto:{C["email"]}">{I("mail")}{C["email"]}</a></div><div class="tb-r"><span>{I("pin")}Vadapalani, Chennai</span></div></div></div>
+    return f'''<div class="topbar"><div class="wrap"><div class="tb-l"><a href="tel:{C["phone_href"]}">{I("phone")}{C["phone"]}</a><a href="mailto:{C["email"]}">{I("mail")}{C["email"]}</a></div><div class="tb-r"><span class="open-now" data-open></span><span>{I("clock")}{C["hours"]}</span><span>{I("pin")}Vadapalani, Chennai</span></div></div></div>
 <header class="site"><div class="wrap nav">{logo()}
 <ul class="menu">{a("index.html","Home","home")}{a("about.html","About","about")}
 <li class="has-mega"><button aria-expanded="false" class="{"active" if active=="products" else ""}">Products {I("chev",'class="chev"')}</button><div class="mega">{mega}<a class="all" href="products.html">Browse all {TOTAL}+ products {I("arrow",'width="16" height="16"')}</a></div></li>
@@ -95,16 +97,19 @@ def footer():
     return f'''<footer class="site"><div class="wrap"><div class="foot">
 <div>{logo()}<p>Medical equipment and instruments for hospitals and clinics — supplied, installed and supported from Chennai, in partnership with leading manufacturers worldwide.</p><p style="font-size:12px;opacity:.6;margin-top:14px">Photography: Unsplash. Product images courtesy of the respective manufacturers.</p></div>
 <div><h4>Products</h4><ul>{cats}</ul></div><div><h4>&nbsp;</h4><ul>{cats2}<li><a href="products.html"><b>All products →</b></a></li><li><a href="services.html">Services</a></li></ul></div>
-<div><h4>Get in touch</h4><ul><li>{"<br>".join(C["address"])}</li><li><a href="tel:{C["phone_href"]}">Tel: {C["phone"]}</a></li><li>Fax: {C["fax"]}</li><li><a href="mailto:{C["email"]}">{C["email"]}</a></li></ul></div></div>
+<div><h4>Get in touch</h4><ul><li>{"<br>".join(C["address"])}</li><li><a href="tel:{C["phone_href"]}">Tel: {C["phone"]}</a></li><li>Fax: {C["fax"]}</li><li>{C["hours"]}</li><li><a href="mailto:{C["email"]}">{C["email"]}</a></li></ul></div></div>
 <div class="foot-big">TRIMLINE</div>
 <div class="foot-bottom"><span>© <span id="yr">2026</span> Trimline Medical Systems. All rights reserved.</span><span><a href="about.html">About</a> · <a href="principals.html">Principals</a> · <a href="contact.html">Contact</a></span></div></div></footer>
-<a class="wa" href="tel:{C["phone_href"]}" aria-label="Call Trimline">{I("phone")}</a><button class="to-top" aria-label="Back to top">{I("up")}</button>
+<a class="wa" href="tel:{C["phone_href"]}" aria-label="Call Trimline">{I("phone")}</a><nav class="mbar" aria-label="Quick actions"><a href="tel:{C["phone_href"]}">{I("phone")}<span>Call</span></a><a href="{C["map_link"]}" target="_blank" rel="noopener">{I("nav")}<span>Directions</span></a><a href="contact.html" class="mq">{I("list")}<span>Get a quote</span></a></nav><button class="to-top" aria-label="Back to top">{I("up")}</button>
 <button class="qbtn" aria-label="View quote list">{I("list")} Quote list <span class="c">0</span></button>
 <div class="qpanel"><div class="in"><h3>Your quote list <button data-qclose aria-label="Close">{I("x")}</button></h3><p class="sub">Add products from any page, then send them all in one enquiry.</p><div class="items"></div><a class="btn btn-primary" href="contact.html">Send enquiry {I("arrow")}</a></div></div>
 <div class="toast">{I("check")}<span></span></div>'''
 
-def page(name, title, desc, body, active="", extra_js=""):
-    doc = head(title, desc) + header(active) + "<main>" + body + "</main>" + footer() + (f"<script>{extra_js}</script>" if extra_js else "") + f"<script>{JS}</script></body></html>"
+OGI = {"index.html": PHOTOS["hero"], "about.html": PHOTOS["lobby"], "services.html": PHOTOS["services"], "contact.html": PHOTOS["building"], "principals.html": PHOTOS["doctor"], "products.html": PHOTOS["hero2"]}
+OGI.update({c["slug"] + ".html": CAT_PHOTO[c["slug"]] for c in CATEGORIES})
+def page(name, title, desc, body, active="", extra_js="", ld_extra=""):
+    canon = C["site"] + ("" if name == "index.html" else name)
+    doc = head(title, desc, canon, U(OGI.get(name, PHOTOS["hero"]), 1200), ld_extra) + header(active) + "<main>" + body + "</main>" + footer() + (f"<script>{extra_js}</script>" if extra_js else "") + f"<script>{JS}</script></body></html>"
     open(os.path.join(OUT, name), "w").write(doc)
 
 def page_hero(title, sub, crumbs, icon=None, meta="", photo=None):
@@ -120,7 +125,8 @@ def prod_card(p, cat):
     pts = "".join(f"<li>{e(x)}</li>" for x in p["points"])
     q = f'contact.html?product={e(p["name"]).replace(" ", "+")}&amp;category={cat["slug"]}'
     cls = "prod rv" + ("" if has else " noimg") + (" wide" if p.get("wide") else "")
-    return f'''<article class="{cls}"><div class="media">{brand}{media_img}<div class="ph" style="background-image:url({U(CAT_PHOTO[cat['slug']],800)})">{I(cat["icon"])}<b>{e(p["name"])}</b></div></div>
+    pid = re.sub(r"[^a-z0-9]+", "-", p["name"].lower()).strip("-")
+    return f'''<article class="{cls}" id="{pid}"><div class="media"><button class="share" data-share="{e(p['name'])}" data-url="{cat['slug']}.html#{pid}" aria-label="Share {e(p['name'])}">{I("share")}</button>{brand}{media_img}<div class="ph" style="background-image:url({U(CAT_PHOTO[cat['slug']],800)})">{I(cat["icon"])}<b>{e(p["name"])}</b></div></div>
 <div class="body"><h3>{e(p["name"])}</h3><ul>{pts}</ul><div class="acts"><button class="add" data-add="{e(p['name'])}" data-cat="{e(cat['title'])}">{I("plus")}<span>Add to quote</span></button><a class="q" href="{q}">Enquire {I("arrow")}</a></div></div></article>'''
 
 # ---------------- HOME ----------------
@@ -181,8 +187,8 @@ home = f'''
 <div class="why">{why}</div></div></section>
 <section style="padding-bottom:0"></section>
 {cta()}'''
-page("index.html", "Trimline Medical Systems — Medical Equipment & Instruments, Chennai",
-     "Trimline Medical Systems supplies patient monitors, anaesthesia workstations, ventilators, OT lights & tables, defibrillators, X-ray, C-arm, ENT and neonatal equipment in Chennai.", home, "home")
+page("index.html", "Medical Equipment Dealer in Chennai — ICU, OT, NICU & Imaging | Trimline Medical Systems",
+     "Trimline Medical Systems, Vadapalani, Chennai: patient monitors, anaesthesia workstations, ventilators, OT lights & tables, ZOLL defibrillators, X-ray, C-arm, ENT and NICU equipment from MAQUET, Skanray, ZOLL and more. Since 2002.", home, "home")
 
 # ---------------- SERVICES ----------------
 svc = "".join(f'<div class="rv d{i%3+1}"><span class="ic">{I(ic)}</span><h3>{t}</h3><p>{d}</p></div>' for i, (ic, t, d) in enumerate(SERVICES))
@@ -193,7 +199,8 @@ body += f'''<section><div class="wrap"><div class="svc">{svc}</div></div></secti
 <div class="rv d2"><span class="eyebrow">How we work</span><h2>A simple, <em class="s">proven</em> process.</h2><div class="process vert">{process}</div></div></div></section>
 <section style="padding-top:0"><div class="wrap"><div class="sec-head" style="justify-content:center;text-align:center"><div><span class="eyebrow rv">Questions</span><h2 class="rv d1">Frequently asked</h2></div></div><div class="faq">{"".join(f'<details class="rv"><summary>{q}</summary><p>{a}</p></details>' for q, a in FAQ)}</div></div></section>
 {cta()}'''
-page("services.html", "Services — Trimline Medical Systems", "Site planning, installation, training, free maintenance and updates for medical equipment.", body, "services")
+FAQLD = '<script type="application/ld+json">' + json.dumps({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}} for q,a in FAQ]}) + '</script>'
+page("services.html", "Services — Trimline Medical Systems", "Medical equipment site planning, installation, training, free maintenance and updates in Chennai.", body, "services", ld_extra=FAQLD)
 
 # ---------------- CATEGORY PAGES ----------------
 side = lambda active: "".join(f'<a href="{c["slug"]}.html" class="{"active" if c["slug"]==active else ""}">{I(c["icon"])}{e(c["title"])}</a>' for c in CATEGORIES)
@@ -207,7 +214,13 @@ for c in CATEGORIES:
     groups = "".join(f'<div class="group"><div class="group-title"><h2>{e(gt)}</h2><span></span><small>{len(ps)} {"model" if len(ps)==1 else "models"}</small></div><div class="products">{"".join(prod_card(p, c) for p in ps)}</div></div>' for gt, ps in c["groups"])
     body += f'<section style="padding-top:70px;padding-bottom:40px"><div class="wrap layout"><aside class="side"><h4>Product lines</h4>{side(c["slug"])}</aside><div>{gal}{groups}</div></div></section>'
     body += cta(f"Need help choosing {e(c['title'].lower())}?", "Share your requirements and we'll recommend the right configuration, with a detailed quotation.")
-    page(f'{c["slug"]}.html', f'{c["title"]} — Trimline Medical Systems', c["intro"], body, "products")
+    pnames = [p["name"] for g in c["groups"] for p in g[1]]
+    t = f'{c["title"]} in Chennai' + (f' — {", ".join(brands[:2])}' if brands else '') + ' | Trimline Medical Systems'
+    d = f'{c["intro"]} Models: {", ".join(pnames[:5])}. Supply, installation & service in Chennai — call {C["phone"]}.'
+    il = {"@context":"https://schema.org","@type":"ItemList","name":c["title"],"itemListElement":[{"@type":"ListItem","position":i+1,"item":{"@type":"Product","name":p["name"],"description":"; ".join(p["points"]),**({"brand":{"@type":"Brand","name":p["brand"]}} if p.get("brand") else {}),"url":C["site"]+c["slug"]+".html#"+re.sub(r"[^a-z0-9]+","-",p["name"].lower()).strip("-")}} for i,p in enumerate([p for g in c["groups"] for p in g[1]])]}
+    bc = {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":C["site"]},{"@type":"ListItem","position":2,"name":"Products","item":C["site"]+"products.html"},{"@type":"ListItem","position":3,"name":c["title"],"item":C["site"]+c["slug"]+".html"}]}
+    ld = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (il, bc))
+    page(f'{c["slug"]}.html', t, d, body, "products", ld_extra=ld)
 
 # ---------------- PRODUCTS INDEX ----------------
 plist = []
@@ -262,6 +275,7 @@ body += f'''<section style="padding-top:70px"><div class="wrap"><div class="cont
 <div class="info-card rv"><h2>Trimline Medical Systems</h2>
 <div class="info-row"><span class="ic">{I("pin")}</span><div><small>Visit</small>{"<br>".join(C["address"])}<br><a href="{C["map_link"]}" target="_blank" rel="noopener" style="color:var(--accent-2);font-weight:700;font-size:14px">Get directions →</a></div></div>
 <div class="info-row"><span class="ic">{I("phone")}</span><div><small>Call</small><a href="tel:{C["phone_href"]}">{C["phone"]}</a></div></div>
+<div class="info-row"><span class="ic">{I("clock")}</span><div><small>Hours</small>{C["hours"]} <span class="open-now" data-open></span></div></div>
 <div class="info-row"><span class="ic">{I("fax")}</span><div><small>Fax</small>{C["fax"]}</div></div>
 <div class="info-row"><span class="ic">{I("mail")}</span><div><small>Email</small><a href="mailto:{C["email"]}" style="word-break:break-all">{C["email"]}</a></div></div></div>
 <div class="form-card rv d1"><div class="form-ok hidden"><h2>Thank you! ✓</h2><p style="color:var(--muted);margin-top:10px">Your enquiry has been sent. Our team will get back to you shortly.</p></div>
@@ -279,7 +293,7 @@ body += f'''<section style="padding-top:70px"><div class="wrap"><div class="cont
 <div class="form-foot"><small>Prefer to talk? Call <a href="tel:{C["phone_href"]}" style="color:var(--accent);font-weight:700">{C["phone"]}</a></small><button class="btn btn-primary" type="submit">Send enquiry {I("arrow")}</button></div></form></div></div>
 <div class="map rv"><iframe src="{C["map"]}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Trimline Medical Systems on Google Maps"></iframe></div></div></section>
 <section style="padding-top:0"><div class="wrap"><div class="sec-head" style="justify-content:center;text-align:center"><div><span class="eyebrow rv">Questions</span><h2 class="rv d1">Frequently asked</h2></div></div><div class="faq">{"".join(f'<details class="rv"><summary>{q}</summary><p>{a}</p></details>' for q, a in FAQ)}</div></div></section>'''
-page("contact.html", "Contact — Trimline Medical Systems", "Contact Trimline Medical Systems, Vadapalani, Chennai. Tel 044 2362 4880.", body, "contact")
+page("contact.html", "Contact — Trimline Medical Systems", "Contact Trimline Medical Systems, Vadapalani, Chennai — medical equipment quotes, demos and service. Tel 044 2362 4880, Mon–Sat 9:30–6:30.", body, "contact", ld_extra=FAQLD)
 
 # ---------------- 404 ----------------
 body = page_hero("Page <em class='s'>not found.</em>", "The page you're looking for has moved. Try our product range or get in touch.", ["404"])
@@ -291,7 +305,7 @@ page("404.html", "Not found — Trimline Medical Systems", "Page not found", bod
 red = ["/index.php  /  301", "/about.php  /about.html  301", "/principles.php  /principals.html  301", "/contact.php  /contact.html  301"]
 red += [f'/{c["legacy"]}  /{c["slug"]}.html  301' for c in CATEGORIES]
 open(os.path.join(OUT, "_redirects"), "w").write("\n".join(red) + "\n")
-open(os.path.join(OUT, "robots.txt"), "w").write("User-agent: *\nAllow: /\n")
+open(os.path.join(OUT, "robots.txt"), "w").write("User-agent: *\nAllow: /\n\nSitemap: https://trimlinemedicals.com/sitemap.xml\n")
 pages = ["", "about.html", "services.html", "products.html", "principals.html", "contact.html"] + [c["slug"] + ".html" for c in CATEGORIES]
 open(os.path.join(OUT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(f"<url><loc>https://trimlinemedicals.com/{p}</loc></url>" for p in pages) + "</urlset>")
 print("built", len(os.listdir(OUT)), "files;", TOTAL, "products")

@@ -114,3 +114,32 @@
   f&&f.addEventListener('submit',function(){save([])});
   sync();
 })();
+(function(){
+  // open-now badge (Chennai time, Mon–Sat 9:30–18:30)
+  try{
+    var p=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Kolkata',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date()),o={};
+    p.forEach(function(x){o[x.type]=x.value});
+    var m=(+o.hour)*60+(+o.minute),open=o.weekday!=='Sun'&&m>=570&&m<1110;
+    document.querySelectorAll('[data-open]').forEach(function(el){el.textContent=open?'Open now':'Closed now';el.classList.add(open?'on':'off')});
+  }catch(e){}
+
+  // share a product (native share sheet, else WhatsApp)
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-share]');if(!b)return;e.preventDefault();
+    var url=new URL(b.dataset.url,location.href).href,t=b.dataset.share+' — Trimline Medical Systems, Chennai';
+    if(navigator.share){navigator.share({title:t,text:t,url:url}).catch(function(){});}
+    else window.open('https://wa.me/?text='+encodeURIComponent(t+'\n'+url),'_blank','noopener');
+  });
+
+  // enquiry form: Netlify handles it there; elsewhere fall back to email
+  var f=document.querySelector('form[name=enquiry]');
+  if(f&&!/netlify|trimlinemedicals\.com$/.test(location.hostname)){
+    f.addEventListener('submit',function(e){
+      if(!f.checkValidity())return;e.preventDefault();
+      var v=function(n){var el=f.querySelector('[name='+n+']');return el?el.value:''};
+      var body='Name: '+v('name')+'\nOrganisation: '+v('organisation')+'\nEmail: '+v('email')+'\nPhone: '+v('phone')+'\nProduct line: '+v('category')+(v('products')?'\nProducts: '+v('products'):'')+'\n\n'+v('message');
+      location.href='mailto:contact@trimlinemedicalsystems.com?subject='+encodeURIComponent(v('subject')||'Website enquiry')+'&body='+encodeURIComponent(body);
+      try{localStorage.removeItem('trimline-quote')}catch(x){}
+    });
+  }
+})();
