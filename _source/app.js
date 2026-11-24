@@ -143,3 +143,4 @@
     });
   }
 })();
+(function(){var a=document.querySelector('.side a.active');if(a&&a.parentElement.scrollWidth>a.parentElement.clientWidth){a.parentElement.scrollLeft=a.offsetLeft-20}})();
