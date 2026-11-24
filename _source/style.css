@@ -641,3 +641,7 @@ html{-webkit-tap-highlight-color:transparent}
   .foot-bottom{flex-direction:column;gap:6px}
   .topbar{font-size:12px}
 }
+@media (max-width:640px){
+  .dept{padding-top:56px}
+  .cat.photo::before{background:linear-gradient(180deg,rgba(8,32,44,.55) 0%,rgba(8,32,44,.85) 40%,rgba(8,32,44,.97) 100%)}
+}
