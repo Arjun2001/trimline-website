@@ -674,3 +674,11 @@ html{-webkit-tap-highlight-color:transparent}
   .topbar .tb-r{display:flex}
   .topbar .tb-r span:not(.open-now){display:none}
 }
+
+/* ===================== v5: original TMS logo ===================== */
+.logo img{height:34px;width:auto;display:block}
+.foot .logo{display:inline-flex;background:#fff;padding:12px 16px;border-radius:14px}
+.foot .logo img{height:30px}
+.drawer-head .logo img{height:28px}
+@media (max-width:640px){.logo img{height:26px}}
+@media (max-width:360px){.logo img{height:22px}}

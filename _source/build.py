@@ -59,20 +59,20 @@ def head(title, desc, canon='', ogimg='', ld_extra=''):
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}"><meta name="theme-color" content="#08202c">
 <meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{canon}"><meta property="og:image" content="{ogimg}"><meta property="og:site_name" content="Trimline Medical Systems"><meta property="og:locale" content="en_IN"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="{canon}"><meta name="geo.region" content="IN-TN"><meta name="geo.placename" content="Chennai">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230aa58a'/%3E%3Cpath d='M3 12h3.5l2-5 4 10 2-5H21' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="{IMG}favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Manrope:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://images.unsplash.com">
 <script type="application/ld+json">{LD}</script>{ld_extra}
 <style>{CSS}</style></head><body><div class="progress"></div>'''
 
-LD = json.dumps({"@context":"https://schema.org","@type":"MedicalBusiness","name":C["name"],"description":"Medical equipment and instruments supplier",
+LD = json.dumps({"@context":"https://schema.org","@type":"MedicalBusiness","name":C["name"],"alternateName":"TMS","logo":IMG+"logo.png","description":"Medical equipment and instruments supplier",
   "telephone":"+91-44-23624880","faxNumber":"+91-44-23624881","email":C["email"],"url":"https://trimlinemedicals.com/",
   "address":{"@type":"PostalAddress","streetAddress":"Plot No. 3, Flat No. G1, Venkateshwara Street, Dhanalakshmi Colony, Vadapalani","addressLocality":"Chennai","postalCode":"600026","addressRegion":"Tamil Nadu","addressCountry":"IN"},
   "geo":{"@type":"GeoCoordinates","latitude":13.05598,"longitude":80.20752},"openingHours":"Mo-Sa 09:30-18:30","foundingDate":"2002","areaServed":"Chennai, Tamil Nadu","sameAs":C["same_as"],"hasMap":C["map_link"],"priceRange":"On request","image":U("1579684385127-1ef15d508118",1200),"brand":[{"@type":"Brand","name":n} for n,_,_ in PRINCIPALS]})
 
 def logo():
-    return f'<a href="index.html" class="logo" aria-label="Trimline Medical Systems home"><span class="logo-mark">{LOGO_MARK}</span><span><b>Trimline</b><small>Medical Systems</small></span></a>'
+    return f'<a href="index.html" class="logo" aria-label="Trimline Medical Systems (TMS) — home"><img src="{img("logo.png")}" alt="Trimline Medical Systems (TMS)" width="369" height="40"></a>'
 
 def header(active=""):
     mega = "".join(f'<a href="{c["slug"]}.html"><span class="ic">{I(c["icon"])}</span><span><b>{e(c["title"])}</b><span>{e(c["short"])}</span></span></a>' for c in CATEGORIES)
@@ -95,12 +95,12 @@ def footer():
     cats = "".join(f'<li><a href="{c["slug"]}.html">{e(c["title"])}</a></li>' for c in CATEGORIES[:7])
     cats2 = "".join(f'<li><a href="{c["slug"]}.html">{e(c["title"])}</a></li>' for c in CATEGORIES[7:])
     return f'''<footer class="site"><div class="wrap"><div class="foot">
-<div>{logo()}<p>Medical equipment and instruments for hospitals and clinics — supplied, installed and supported from Chennai, in partnership with leading manufacturers worldwide.</p><p style="font-size:12px;opacity:.6;margin-top:14px">Photography: Unsplash. Product images courtesy of the respective manufacturers.</p></div>
+<div>{logo()}<p>Trimline Medical Systems (TMS) — medical equipment and instruments for hospitals and clinics — supplied, installed and supported from Chennai, in partnership with leading manufacturers worldwide.</p><p style="font-size:12px;opacity:.6;margin-top:14px">Photography: Unsplash. Product images courtesy of the respective manufacturers.</p></div>
 <div><h4>Products</h4><ul>{cats}</ul></div><div><h4>&nbsp;</h4><ul>{cats2}<li><a href="products.html"><b>All products →</b></a></li><li><a href="services.html">Services</a></li></ul></div>
 <div><h4>Get in touch</h4><ul><li>{"<br>".join(C["address"])}</li><li><a href="tel:{C["phone_href"]}">Tel: {C["phone"]}</a></li><li>Fax: {C["fax"]}</li><li>{C["hours"]}</li><li><a href="mailto:{C["email"]}">{C["email"]}</a></li></ul></div></div>
-<div class="foot-big">TRIMLINE</div>
+<div class="foot-big">TMS</div>
 <div class="foot-bottom"><span>© <span id="yr">2026</span> Trimline Medical Systems. All rights reserved.</span><span><a href="about.html">About</a> · <a href="principals.html">Principals</a> · <a href="contact.html">Contact</a></span></div></div></footer>
-<a class="wa" href="tel:{C["phone_href"]}" aria-label="Call Trimline">{I("phone")}</a><nav class="mbar" aria-label="Quick actions"><a href="tel:{C["phone_href"]}">{I("phone")}<span>Call</span></a><a href="{C["map_link"]}" target="_blank" rel="noopener">{I("nav")}<span>Directions</span></a><a href="contact.html" class="mq">{I("list")}<span>Get a quote</span></a></nav><button class="to-top" aria-label="Back to top">{I("up")}</button>
+<a class="wa" href="tel:{C["phone_href"]}" aria-label="Call Trimline Medical Systems">{I("phone")}</a><nav class="mbar" aria-label="Quick actions"><a href="tel:{C["phone_href"]}">{I("phone")}<span>Call</span></a><a href="{C["map_link"]}" target="_blank" rel="noopener">{I("nav")}<span>Directions</span></a><a href="contact.html" class="mq">{I("list")}<span>Get a quote</span></a></nav><button class="to-top" aria-label="Back to top">{I("up")}</button>
 <button class="qbtn" aria-label="View quote list">{I("list")} Quote list <span class="c">0</span></button>
 <div class="qpanel"><div class="in"><h3>Your quote list <button data-qclose aria-label="Close">{I("x")}</button></h3><p class="sub">Add products from any page, then send them all in one enquiry.</p><div class="items"></div><a class="btn btn-primary" href="contact.html">Send enquiry {I("arrow")}</a></div></div>
 <div class="toast">{I("check")}<span></span></div>'''
@@ -210,7 +210,7 @@ for c in CATEGORIES:
     body = page_hero(e(c["title"]), e(c["intro"]), ['<a href="products.html">Products</a>', e(c["title"])], c["icon"], meta, CAT_PHOTO[c["slug"]])
     gal = ""
     if c.get("gallery"):
-        gal = '<div class="gallery">' + "".join(f'<div class="rv" data-hide-wrap><img data-hide-on-error loading="lazy" src="{img(g)}" alt="Ambulance fabricated by Trimline"></div>' for g in c["gallery"]) + "</div>"
+        gal = '<div class="gallery">' + "".join(f'<div class="rv" data-hide-wrap><img data-hide-on-error loading="lazy" src="{img(g)}" alt="Ambulance fabricated by Trimline Medical Systems"></div>' for g in c["gallery"]) + "</div>"
     groups = "".join(f'<div class="group"><div class="group-title"><h2>{e(gt)}</h2><span></span><small>{len(ps)} {"model" if len(ps)==1 else "models"}</small></div><div class="products">{"".join(prod_card(p, c) for p in ps)}</div></div>' for gt, ps in c["groups"])
     body += f'<section style="padding-top:70px;padding-bottom:40px"><div class="wrap layout"><aside class="side"><h4>Product lines</h4>{side(c["slug"])}</aside><div>{gal}{groups}</div></div></section>'
     body += cta(f"Need help choosing {e(c['title'].lower())}?", "Share your requirements and we'll recommend the right configuration, with a detailed quotation.")
@@ -237,7 +237,7 @@ page("products.html", "All Products — Trimline Medical Systems", "Browse all m
 # ---------------- ABOUT ----------------
 def li(xs): return "".join(f"<li>{I('check')}{e(x)}</li>" for x in xs)
 clients = "".join(f'<div class="rv" data-hide-wrap><img data-hide-on-error loading="lazy" src="{img(f"clients/logo-{i}.jpg")}" alt="Client logo"></div>' for i in range(1, 6))
-body = page_hero("Equipping care teams to <em class='s'>save lives.</em>", "Trimline Medical Systems brings world-class medical technology to hospitals and clinics — with the planning, installation and support that keeps it working.", ["About"], photo=PHOTOS["lobby"])
+body = page_hero("Equipping care teams to <em class='s'>save lives.</em>", "Trimline Medical Systems (TMS) brings world-class medical technology to hospitals and clinics — with the planning, installation and support that keeps it working.", ["About"], photo=PHOTOS["lobby"])
 body += f'''<div class="wrap"><div class="stats">
 <div class="stat rv"><b data-count="{len(PRINCIPALS)}">{len(PRINCIPALS)}</b><span>Global principals</span></div>
 <div class="stat rv d1"><b data-count="{len(CATEGORIES)}">{len(CATEGORIES)}</b><span>Product lines</span></div>
@@ -257,7 +257,7 @@ body += f'''<div class="wrap"><div class="stats">
 <div class="rv d2"><span class="ic">{I("pulse")}</span><h3>ORION ECG machine</h3><ul>{li(["3-channel ECG machine","Rhythm lead recording","High-resolution built-in thermal recorder","Accepts Z-fold thermal paper"])}</ul></div>
 </div></div></section>
 <section class="dark"><div class="wrap"><div class="sec-head"><div><span class="eyebrow rv">See it in action</span><h2 class="rv d1">Our products, <em class="s">in detail.</em></h2></div></div>
-<div class="video rv"><iframe src="https://www.youtube-nocookie.com/embed/0rlUheWYAEM" title="Trimline product video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div></section>
+<div class="video rv"><iframe src="https://www.youtube-nocookie.com/embed/0rlUheWYAEM" title="Trimline Medical Systems product video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div></section>
 <section><div class="wrap"><div class="sec-head"><div><span class="eyebrow rv">Our happy clients</span><h2 class="rv d1">Trusted by hospitals <em class="s">across the region.</em></h2></div></div><div class="clients">{clients}</div></div></section>
 {cta()}'''
 page("about.html", "About — Trimline Medical Systems", "About Trimline Medical Systems, Chennai — medical equipment supply, installation and support.", body, "about")
